@@ -1,0 +1,716 @@
+<!doctype html>
+<html><head><meta charset="UTF-8">
+<script>
+(function(){
+  if(location.hostname === "srisquareapp.github.io" && location.protocol === "http:"){
+    location.replace("https://srisquareapp.github.io" + location.pathname + location.search + location.hash);
+  }
+})();
+</script><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b2038">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Sri Square">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="./manifest.json">
+<script>
+// Register the offline service worker as early as possible so Android Chrome
+// can detect this site as an installable PWA before the page finishes loading.
+if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
+  navigator.serviceWorker.register("./sw.js", {scope:"./", updateViaCache:"none"}).catch(function(e){ console.log("Offline mode registration failed", e); });
+}
+</script>
+<link rel="apple-touch-icon" sizes="192x192" href="./icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
+<title>Sri Square Accounts</title>
+<style>
+body{margin:0;background:linear-gradient(135deg,#f3f6ff 0%,#fff7f1 50%,#f4fbf8 100%);color:#172033;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{background:linear-gradient(135deg,#123c78 0%,#245f9e 52%,#6b3fa0 100%);color:white;padding:22px 18px 18px;position:sticky;top:0;z-index:2;box-shadow:0 4px 14px #173b6a55}h1{margin:0;font-size:25px;letter-spacing:.4px}
+main{max-width:650px;margin:auto;padding:14px 14px 90px}.card{background:rgba(255,255,255,.96);border-radius:16px;padding:16px;margin:12px 0;box-shadow:0 5px 18px #243b5a18;border:1px solid #ffffff}
+h2{font-size:19px;margin:4px 0 15px;color:#173f78}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{font-size:12px;color:#53627a;display:block;margin:10px 0 5px;font-weight:600}
+input,button{width:100%;padding:12px;border:1px solid #d9e0ec;border-radius:10px;font-size:16px;box-sizing:border-box}input:focus{outline:2px solid #7db4ef;border-color:#4388d1}
+button{background:linear-gradient(135deg,#1c5aa6,#6a3fa1);color:white;border:0;font-weight:700;margin-top:10px;box-shadow:0 3px 9px #315d9328}.secondary{background:#eef2f8;color:#234a7b;box-shadow:none}
+.row{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e7ebf2;padding:8px 0;gap:10px}.row input{max-width:150px;text-align:right}.total{font-weight:800;font-size:18px;color:#173f78}
+.nav{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}.nav button{margin:0;background:#fff;color:#234a7b;border:1px solid #d8e1ef;box-shadow:0 2px 7px #234a7b14}.nav button:hover{background:#eef5ff}.hidden{display:none}.item{padding:12px 0;border-bottom:1px solid #e5eaf2}.muted{color:#65738a;font-size:13px}
+ .reportCard{margin-top:10px;border-left:4px solid #6a3fa1}.reportTop{display:flex;justify-content:space-between;gap:8px}.remarks{background:#fff7df;color:#66501a;padding:8px;border-radius:8px;margin:8px 0;border-left:3px solid #e5ad2f}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.grid2 button{margin-top:8px}
+
+#printSheet{position:fixed;inset:0;z-index:9999;background:#fff;overflow:auto;padding:0 16px 24px;box-sizing:border-box}.printActions{display:flex;gap:8px;max-width:800px;margin:0 auto 12px;padding-top:max(28px,env(safe-area-inset-top));box-sizing:border-box}.printActions button{margin:0;min-height:58px;padding:12px 14px;line-height:1.15;box-sizing:border-box;flex:1}.sheet{max-width:800px;margin:0 auto;font-family:Arial,sans-serif;color:#111;font-size:11px}.sheet .head{text-align:center;border-bottom:2px solid #111;padding-bottom:6px;margin-bottom:8px}.sheet h1{font-size:18px;margin:0 0 3px}.sheet h2{font-size:12px;margin:8px 0 4px;border-bottom:1px solid #bbb;padding-bottom:3px}.sheet .meta{display:grid;grid-template-columns:1fr 1fr;gap:3px 16px;margin-bottom:6px}.sheet .remarks{border:1px solid #ccc;padding:5px;margin:5px 0 7px}.sheet .line{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px dotted #ccc}.sheet .total{font-weight:700;font-size:12px;border-top:1px solid #111;margin-top:3px;padding-top:4px}.sheet .final{font-weight:800;font-size:14px;border:2px solid #111;padding:6px;margin-top:7px;text-align:right}
+@media print{body>*:not(#printSheet){display:none!important}#printSheet{position:static;display:block;overflow:visible;padding:0}.printActions{display:none!important}.sheet{max-width:none;width:100%;max-height:277mm;font-size:11px}@page{size:A4 portrait;margin:10mm}}
+
+.menuGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:18px 0 22px}
+.menuCard{margin:0!important;min-height:92px!important;padding:14px!important;border-radius:18px!important;text-align:left!important;background:#fff!important;border:1px solid #e4e9f2!important;box-shadow:0 5px 16px rgba(35,63,100,.10)!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:center!important;position:relative;overflow:hidden}
+.menuCard:after{content:"";position:absolute;right:-22px;top:-22px;width:72px;height:72px;border-radius:50%;opacity:.14}
+.bookingMenu{border-left:5px solid #2878d8!important}.bookingMenu:after{background:#2878d8}
+.savedMenu{border-left:5px solid #18a878!important}.savedMenu:after{background:#18a878}
+.accountMenu{border-left:5px solid #e19a18!important}.accountMenu:after{background:#e19a18}
+.reportMenu{border-left:5px solid #7b4bd6!important}.reportMenu:after{background:#7b4bd6}
+.menuIcon{font-size:25px;font-weight:800;line-height:1;margin-bottom:7px}
+.menuTitle{font-size:17px;font-weight:800;color:#173f72;line-height:1.15}
+.menuSub{font-size:12px;color:#718096;margin-top:4px}
+.menuCard:active{transform:scale(.98)}
+@media(max-width:420px){.menuGrid{gap:10px}.menuCard{min-height:88px!important;padding:12px!important}.menuTitle{font-size:15px}}
+
+.appMenu{position:relative;margin:14px 0 20px}
+.menuCheck{position:absolute;opacity:0;pointer-events:none}.menuCheck:checked + .menuToggle + .menuPanel{display:block!important}.menuToggle{margin:0!important;width:100%;padding:14px 16px!important;border:0!important;border-radius:15px!important;background:linear-gradient(135deg,#2878d8,#6846c7)!important;color:#fff!important;font-size:18px!important;font-weight:800!important;text-align:left!important;box-shadow:0 6px 18px rgba(60,75,160,.20)!important}
+.menuPanel{position:absolute;z-index:20;left:0;right:0;top:58px;background:#fff;border:1px solid #e4e9f2;border-radius:16px;box-shadow:0 12px 28px rgba(35,63,100,.18);padding:8px}
+.menuItem{width:100%;margin:0!important;padding:12px!important;background:#fff!important;border:0!important;border-bottom:1px solid #edf0f5!important;border-radius:10px!important;color:#173f72!important;display:flex!important;align-items:center!important;gap:12px!important;text-align:left!important}
+.menuItem:last-child{border-bottom:0!important}
+.menuItem .mi{width:36px;height:36px;border-radius:11px;background:#eef4ff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800}
+.menuItem b{display:block;font-size:15px}.menuItem small{display:block;color:#7a8699;font-size:11px;margin-top:2px}
+
+.menuToggle{display:flex!important;align-items:center!important;gap:12px!important}
+.hamburger{width:24px;height:20px;display:flex;flex-direction:column;justify-content:space-between;flex:none}
+.hamburger i{display:block;height:3px;width:24px;background:#fff;border-radius:3px}
+
+
+.homeWelcome{margin:10px 0 14px;padding:18px 18px 16px;border-radius:18px;background:linear-gradient(135deg,#0d2945,#174f83);color:#fff;box-shadow:0 7px 20px rgba(23,63,114,.18)}
+.homeWelcome h2{margin:0;color:#fff;font-size:24px}.homeWelcome p{margin:5px 0 0;color:#dce9f8;font-size:13px}
+.homeStats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}.homeStat{background:#fff;border:1px solid #e2e8f1;border-radius:15px;padding:14px;box-shadow:0 4px 14px rgba(35,63,100,.08)}.homeStat .hsIcon{font-size:20px}.homeStat .hsLabel{font-size:12px;color:#68778d;margin-top:5px}.homeStat .hsValue{font-size:21px;font-weight:800;color:#173f72;margin-top:3px}
+.homeActions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0 16px}.homeAction{margin:0!important;min-height:62px!important;text-align:left!important;padding:12px 14px!important;border-radius:15px!important;box-shadow:0 4px 12px rgba(35,63,100,.10)!important}.homeAction small{display:block;opacity:.78;font-size:11px;margin-top:3px}
+.calendarCard{padding:14px!important}.calHead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}.calHead h2{margin:0;font-size:20px}.calNav{display:flex;gap:6px}.calNav button{width:40px;padding:8px;margin:0;background:#eef4ff;color:#173f72;box-shadow:none}.calGrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.calDow{text-align:center;font-size:11px;font-weight:800;color:#6b7890;padding:4px 0}.calDay{min-height:42px;border:1px solid #e4e9f1;border-radius:9px;background:#fff;padding:5px 4px;text-align:center;color:#233a58;position:relative;box-sizing:border-box}.calDay.empty{background:transparent;border-color:transparent}.calDay.today{border:2px solid #2878d8}.calDay.booked{background:#fff7df;border-color:#e4b83d;font-weight:800}.calDay.booked:after{content:'';position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:#e1a21b}.calDayNum{font-size:13px}.calDayCount{font-size:9px;color:#8b6818;margin-top:2px}.calendarLegend{display:flex;gap:14px;font-size:11px;color:#6b7280;margin-top:10px;align-items:center}.legendDot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}.calendarBookings{margin-top:12px;padding-top:10px;border-top:1px solid #e8ecf2}.calendarBookings b{color:#173f72}.calBooking{padding:8px 0;border-bottom:1px solid #edf0f4;font-size:13px}.calBooking:last-child{border-bottom:0}.calBooking span{color:#6b7280;font-size:11px}
+@media(max-width:420px){.homeStats{gap:8px}.homeStat{padding:12px}.homeStat .hsValue{font-size:18px}.homeAction{min-height:58px!important}.calDay{min-height:39px}}
+.otherIncomeBox{margin:12px 0;padding:12px;border-radius:12px;background:#f6f3ff;border:1px solid #ddd4f5;color:#274f80}
+.otherIncomeGrid{display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-top:8px}
+.otherIncomeGrid input{margin:0}
+@media(max-width:420px){.otherIncomeGrid{grid-template-columns:1.7fr 1fr}}
+
+.oirow{display:grid!important;grid-template-columns:2fr 1fr 34px;gap:7px;align-items:center;margin-bottom:8px}
+.oirow input{margin:0!important}.removeBtn{margin:0!important;padding:7px 9px!important;background:#fff0f0!important;color:#c62828!important;border:1px solid #f0b5b5!important;border-radius:8px!important}
+.otherIncomeBox{margin:12px 0;padding:12px;border-radius:12px;background:#f6f3ff;border:1px solid #ddd4f5;color:#274f80}
+@media(max-width:420px){.oirow{grid-template-columns:1.8fr 1fr 30px}}
+
+.saveActions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.whatsappBtn{background:#25D366!important;color:#fff!important}.finalBillBtn{font-size:17px!important;padding:15px!important;margin-top:12px!important;border:2px solid #128c3a!important;box-shadow:0 4px 12px rgba(37,211,102,.28)!important}.savedConfirm{position:fixed;left:12px;right:12px;bottom:18px;z-index:9999;background:#fff;border-radius:18px;padding:16px;box-shadow:0 8px 30px rgba(0,0,0,.22);border:1px solid #ddd}.savedConfirm span{font-size:13px;color:#666}.confirmBtns{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:12px}.savedConfirm button{margin:0}.savedConfirm .confirmBtns{grid-template-columns:1fr 1fr}.savedConfirm .confirmBtns .secondary{grid-column:1/-1}
+</style><style>.reportSummary{padding:24px 26px;margin-bottom:18px}.reportSummary h2{margin:0 0 18px;color:#173f75}.summaryRow,.summaryFinal{display:flex;justify-content:space-between;align-items:center;padding:10px 0;font-size:22px}.summaryRow b,.summaryFinal b{font-weight:800}.expenseRow b{color:#9b2c2c}.summaryFinal{margin-top:14px;padding:18px 16px;border-radius:14px;background:#f0f7ee;font-size:25px;color:#173f75}.summaryFinal b{font-size:28px}.reportSummary + .reportCard{margin-top:0}.backToAppBtn{position:relative;z-index:2}.printActions button{white-space:normal;overflow:visible}
+/* iPhone header / status-bar adjustment */
+body { box-sizing: border-box; }
+header { box-sizing: border-box; }
+@media (max-width: 600px) {
+  .termsButton{font-size:14px;padding:8px 12px}
+  header {
+    padding-top: 52px;
+    min-height: 148px;
+  }
+  header h1 { line-height: 1.12; }
+}
+
+
+.termsBox{margin-top:18px;padding:16px;border:1px solid #d9b84c;border-radius:14px;background:#fffaf0}
+.termsBox h3{margin:0 0 10px;color:#163b70;font-size:20px}
+.termsText{font-size:14px;line-height:1.45;color:#333}
+.termsText p{margin:7px 0}
+
+.termsButton{display:inline-flex;width:auto;max-width:100%;margin:10px 0 2px;padding:9px 14px;border:1px solid #d9b84c;border-radius:10px;background:#fffaf0;color:#163b70;font-size:15px;font-weight:700;text-align:center;align-items:center;justify-content:center;white-space:nowrap;line-height:1.2}
+.termsModal{display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.48);padding:calc(18px + env(safe-area-inset-top)) 14px 18px;box-sizing:border-box;align-items:center;justify-content:center}
+.termsModal.open{display:flex}
+.termsModalCard{width:min(720px,100%);max-height:88vh;overflow:auto;background:#fff;border-radius:18px;box-shadow:0 12px 40px rgba(0,0,0,.25);padding:20px;box-sizing:border-box}
+.termsModalHead{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #ddd;padding-bottom:10px;margin-bottom:12px}
+.termsModalHead h3{margin:0;color:#163b70;font-size:22px}
+.termsClose{border:0;background:#eef2f7;color:#163b70;border-radius:50%;width:40px;height:40px;font-size:28px;line-height:1}
+.termsModal .termsText{font-size:15px;line-height:1.5;color:#333}
+.termsModal .termsText p{margin:8px 0}
+
+.sectionHead{display:flex;align-items:center;justify-content:space-between;gap:10px}.sectionHead h2{margin:0}.customerRow{padding:14px 0;border-bottom:1px solid #e5e7eb}.customerActions{display:flex;gap:7px;margin-top:8px}.customerActions a,.customerActions button{flex:1;text-align:center;text-decoration:none;font-size:13px;padding:9px 8px;border-radius:9px;border:0;background:#eef4ff;color:#173f75;font-weight:700}.customerMeta{font-size:12px;color:#66758a;margin-top:3px}
+.paymentStatus{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:800;background:#eef2f7;color:#52627a;margin-top:7px}.paymentStatus.cleared{background:#e8f8ee;color:#16834b}.paymentBtn{background:#16834b!important;color:#fff!important;margin-top:8px}.paymentBtn.clear{background:#eef2f7!important;color:#173f75!important}
+
+.cashSummary{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:12px 0}.cashStat{background:#f4f8ff;border:1px solid #dce7f5;border-radius:14px;padding:12px}.cashStat b{display:block;color:#173f72;font-size:18px;margin-top:4px}.cashStat.out b{color:#a33b3b}.cashStat.available{background:#fff8e8;border-color:#ead18a}.cashStat.available b{color:#8a6200}.cashRow{padding:12px 0;border-bottom:1px solid #e8edf3}.cashRowTop{display:flex;justify-content:space-between;gap:10px}.cashIn{color:#16834b;font-weight:800}.cashOut{color:#a33b3b;font-weight:800}.cashMeta{font-size:12px;color:#718096;margin-top:3px}.cashForm{display:grid;gap:9px}.cashForm .grid{margin:0}.cashForm select{width:100%;padding:12px;border:1px solid #d8e0ea;border-radius:10px;background:#fff;color:#173f72;font-size:16px}.cashEmpty{padding:14px 0;color:#718096}.cashDelete{background:#fff0f0!important;color:#a33b3b!important;padding:7px 10px!important;margin-top:7px!important}
+</style></head><body><input id="restoreFile" type="file" accept=".json,application/json" style="display:none" onchange="importData(this)">
+<header><h1>SRI SQUARE ACCOUNTS</h1></header><main>
+<div class="appMenu">
+  <input id="menuCheck" class="menuCheck" type="checkbox">
+  <label for="menuCheck" id="menuToggleBtn" class="menuToggle" role="button" aria-label="Open menu"><span class="hamburger" aria-hidden="true"><i></i><i></i><i></i></span><span>Menu</span></label>
+  <div id="menuPanel" class="menuPanel hidden">
+    <button class="menuItem" type="button" data-tab="home" onclick="tab('home'); closeMenu();"><span class="mi">⌂</span><span><b>Home</b><small>Dashboard & calendar</small></span></button>
+    <button class="menuItem" type="button" data-tab="bookings" onclick="tab('bookings'); closeMenu();"><span class="mi">＋</span><span><b>New Booking</b><small>Create booking</small></span></button>
+    <button class="menuItem" type="button" data-tab="saved" onclick="tab('saved'); closeMenu();"><span class="mi">▣</span><span><b>Bookings</b><small>View all bookings</small></span></button>
+    <button class="menuItem" type="button" data-tab="customers" onclick="tab('customers'); closeMenu();"><span class="mi">👥</span><span><b>Customers</b><small>Names & mobile numbers</small></span></button>
+    <button class="menuItem" type="button" data-tab="accounts" onclick="tab('accounts'); closeMenu();"><span class="mi">₹</span><span><b>Billing</b><small>Income & expenses</small></span></button>
+    <button class="menuItem" type="button" data-tab="reports" onclick="tab('reports'); closeMenu();"><span class="mi">▥</span><span><b>Financial</b><small>ID-wise financial reports</small></span></button>
+    <button class="menuItem" type="button" data-tab="cash" onclick="tab('cash'); closeMenu();"><span class="mi">💳</span><span><b>Cash Balance</b><small>Receipts, expenses & bank deposits</small></span></button>
+    <button class="menuItem" type="button" onclick="backupFromMenu(event)"><span class="mi">⬇️</span><span><b>Backup Data</b><small>Save/share a backup file</small></span></button>
+    <label class="menuItem" for="restoreFile" onclick="prepareRestore(event)"><span class="mi">⬆️</span><span><b>Restore Data</b><small>Select a saved backup file</small></span></label>
+  </div>
+</div>
+
+<section id="home"><div class="homeWelcome"><h2>Welcome to SRI SQUARE</h2><p>Your booking & accounts dashboard</p></div>
+<div class="homeStats"><div class="homeStat"><div class="hsIcon">📅</div><div class="hsLabel">Total Bookings</div><div class="hsValue" id="hsBookings">0</div></div><div class="homeStat"><div class="hsIcon">💰</div><div class="hsLabel">Booking Amount</div><div class="hsValue" id="hsAmount">₹0</div></div><div class="homeStat"><div class="hsIcon">💵</div><div class="hsLabel">Advance Received</div><div class="hsValue" id="hsAdvance">₹0</div></div><div class="homeStat"><div class="hsIcon">📊</div><div class="hsLabel">Balance Due</div><div class="hsValue" id="hsBalance">₹0</div></div></div>
+<div class="homeActions"><button class="homeAction" onclick="tab('bookings')">➕ New Booking</button><button class="homeAction" onclick="tab('saved')">📋 Bookings</button><button class="homeAction" onclick="tab('customers')">👥 Customers</button><button class="homeAction" onclick="tab('accounts')">₹ Billing</button></div>
+<div class="card calendarCard"><div class="calHead"><h2>Booking Calendar</h2><div class="calNav"><button type="button" onclick="changeCalMonth(-1)">‹</button><button type="button" onclick="changeCalMonth(1)">›</button></div></div><div id="calMonth" class="muted" style="font-weight:700;margin-bottom:8px"></div><div class="calGrid" id="calendarGrid"></div><div class="calendarLegend"><span><i class="legendDot" style="background:#e1a21b"></i>Booked date</span><span><i class="legendDot" style="border:2px solid #2878d8;box-sizing:border-box"></i>Today</span></div><div id="calendarBookings" class="calendarBookings"><span class="muted">Tap a booked date to view booking details.</span></div></div>
+<div class="card"><h2>Recent Bookings</h2><div id="homeRecent"></div></div></section>
+<section id="bookings" class="hidden"><div class="card"><h2>New Booking</h2>
+<div class="grid"><div><label>Booking / Serial No.</label><input id="no" placeholder="SS001"></div><div><label>Event Date</label><input id="date" type="date"></div></div>
+<label>Event Type</label><input id="event" placeholder="Marriage / Reception / Engagement">
+<label>Customer Name</label><input id="name" placeholder="Name"><label>Phone Number</label><input id="phone" type="tel" placeholder="Phone number">
+<div class="grid"><div><label>Total Booking Amount</label><input id="bt" type="number" value="0"></div><div><label>Advance Received</label><input id="ba" type="number" value="0"></div></div><div class="grid"><div><label>1st Advance Payment Mode</label><select id="bam"><option value="cash">Cash</option><option value="company">Company Account</option><option value="upi">UPI</option></select></div><div><label>Payment Note</label><input id="bpaynote" placeholder="Optional"></div>
+<button type="button" class="termsButton" onclick="openTermsModal()">📄 View Terms &amp; Conditions</button>
+</div>
+
+</div>
+<label>Notes</label><input id="notes" placeholder="Optional"><div class="saveActions"><button onclick="saveBooking()">💾 Save Booking</button><button class="whatsappBtn" onclick="saveBookingAndWhatsApp()">💬 Save & WhatsApp</button></div></div></section><section id="saved" class="hidden"><div class="card"><h2>Saved Bookings</h2><input placeholder="Search booking / name / phone" oninput="renderBookings(this.value)"><div id="list"></div></div></section>
+
+<section id="customers" class="hidden"><div class="card"><div class="sectionHead"><h2>Customers</h2><button type="button" onclick="downloadCustomersCSV()">⬇️ Download CSV</button></div><input id="customerSearch" placeholder="Search customer / mobile / booking" oninput="renderCustomers(this.value)"><div id="customerList"></div></div></section>
+
+<section id="accounts" class="hidden"><div class="card"><h2>Open Account</h2><input id="find" placeholder="Enter booking number e.g. SS052" oninput="openAccount(this.value)"><div id="acct"></div></div></section>
+
+<section id="reports" class="hidden"><div class="card"><h2>Reports</h2><div id="report"></div><div style="margin-top:18px;padding-top:14px;border-top:1px solid #ddd"><b>Data Backup</b><div style="font-size:12px;color:#6b7280;margin:5px 0 10px">Your entries stay on this iPhone. Keep a backup before app updates or clearing Safari website data.</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button type="button" onclick="exportData()">⬇️ Backup Data</button><label style="display:flex;align-items:center;justify-content:center;background:#eef4ff;color:#173f75;border-radius:10px;padding:12px;font-weight:700;cursor:pointer">⬆️ Restore Data<input type="file" accept="application/json,.json" onchange="importData(this)" style="display:none"></label></div><div style="font-size:11px;color:#7a8699;margin-top:7px" id="backupStatus"></div></div></div></section>
+<section id="cash" class="hidden"><div class="card"><h2>Cash Balance</h2><div class="muted">Cash received from functions is calculated automatically from each payment mode. Only payments marked Cash increase Cash Available.</div><div class="muted" style="margin:8px 0 10px">💡 Each function payment can be Cash, Company Account or UPI. Only Cash receipts increase Cash Available.</div><div class="cashSummary"><div class="cashStat"><span>Total Cash Balance</span><b id="cashReceived">₹0</b></div><div class="cashStat"><span>Cash Available From Collections</span><b id="cashCashReceived">₹0</b></div><div class="cashStat out"><span>Total Outflow</span><b id="cashOutflow">₹0</b></div><div class="cashStat available"><span>Cash Available</span><b id="cashAvailable">₹0</b></div></div><div class="card" style="margin:12px 0;background:#fbfdff"><h3 style="margin-top:0;color:#173f72">＋ Add Entry</h3><div class="cashForm"><div class="grid"><div><label>Date</label><input id="cashDate" type="date"></div><div><label>Type</label><select id="cashType"><option value="expense">Expense</option><option value="rent">Rent Paid</option><option value="bank">Bank Deposit</option><option value="other">Other Payment</option></select></div></div><label>Description</label><input id="cashDesc" placeholder="e.g. Electrician, hall rent, bank deposit"><label>Amount</label><input id="cashAmount" type="number" min="0" placeholder="0"><button type="button" onclick="addCashEntry()">💾 Add Entry</button></div></div><h3 style="color:#173f72">Entries</h3><div id="cashList"></div></div></section>
+</main>
+<script>
+let cur='';
+function loadDB(){
+  try{
+    const raw=localStorage.getItem('ssdb');
+    if(raw){ const parsed=JSON.parse(raw); if(parsed && typeof parsed==='object') return parsed; }
+  }catch(e){}
+  try{
+    const backup=localStorage.getItem('ssdb_backup');
+    if(backup){ const parsed=JSON.parse(backup); if(parsed && typeof parsed==='object'){ localStorage.setItem('ssdb',JSON.stringify(parsed)); return parsed; } }
+  }catch(e){}
+  return {};
+}
+let db=loadDB();
+const $=id=>document.getElementById(id),
+  save=()=>{ const serialized=JSON.stringify(db); try{ const old=localStorage.getItem('ssdb'); if(old && old!==serialized) localStorage.setItem('ssdb_backup',old); localStorage.setItem('ssdb',serialized); localStorage.setItem('ssdb_backup',serialized); localStorage.setItem('ssdb_backup_time',new Date().toISOString()); }catch(e){ console.warn('Data save failed',e); } },
+  n=v=>Number(v)||0, money=v=>'₹'+Math.round(v).toLocaleString('en-IN');
+async function exportData(){
+  try{
+    save();
+    const payload={app:'Sri Square Accounts',version:13,exportedAt:new Date().toISOString(),data:db};
+    const json=JSON.stringify(payload,null,2);
+    const filename='Sri_Square_Accounts_Backup_'+new Date().toISOString().slice(0,10)+'.json';
+    const file=new File([json],filename,{type:'application/json'});
+    // iPhone/iPad: the native Share sheet is the most reliable way to save a JSON file.
+    if(navigator.share){
+      let canShareFile=false;
+      try{canShareFile=!!(navigator.canShare && navigator.canShare({files:[file]}));}catch(e){canShareFile=false;}
+      if(canShareFile){
+        try{
+          await navigator.share({title:'Sri Square Accounts Backup',text:'Sri Square Accounts data backup — '+filename,files:[file]});
+          localStorage.setItem('ssdb_backup_time',new Date().toISOString());
+          updateBackupStatus('Backup shared successfully.');
+          return true;
+        }catch(e){
+          if(e && e.name==='AbortError') return false;
+        }
+      }
+    }
+    // Desktop/other browsers fallback.
+    const blob=new Blob([json],{type:'application/json;charset=utf-8'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download=filename;a.rel='noopener';a.style.display='none';
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),5000);
+    localStorage.setItem('ssdb_backup_time',new Date().toISOString());
+    updateBackupStatus('Backup file created.');
+    // If the browser does not honor downloads, give the user the JSON in a new tab so it can be saved via Share.
+    setTimeout(()=>{
+      if(!/iphone|ipad|ipod/i.test(navigator.userAgent) && !navigator.share) return;
+    },100);
+    return true;
+  }catch(e){
+    console.error(e);
+    alert('Could not create the backup. Please try again.');
+    return false;
+  }
+}
+function backupFromMenu(e){
+  if(e){e.preventDefault();e.stopPropagation();}
+  exportData().finally(()=>closeMenu());
+}
+function prepareRestore(e){
+  // Keep this action as a real <label> click. iOS Safari blocks some programmatic clicks on hidden file inputs.
+  if(e){e.stopPropagation();}
+  const f=document.getElementById('restoreFile');
+  if(f) f.value='';
+  setTimeout(closeMenu,0);
+}
+function updateBackupStatus(message){
+  const bs=document.getElementById('backupStatus');
+  if(bs) bs.textContent=message+' '+autoBackupNotice();
+}
+function importData(input){
+  const file=input && input.files && input.files[0];
+  if(!file){ if(input) input.value=''; return; }
+  const isJson=/\.json$/i.test(file.name||'') || file.type==='application/json' || file.type==='text/json';
+  if(!isJson){ alert('Please select a Sri Square Accounts .json backup file.'); input.value=''; return; }
+  const reader=new FileReader();
+  reader.onerror=()=>{ alert('Could not read the backup file.'); input.value=''; };
+  reader.onload=()=>{
+    try{
+      const text=String(reader.result||'').replace(/^\uFEFF/,'').trim();
+      const payload=JSON.parse(text);
+      const incoming=payload && payload.data ? payload.data : payload;
+      if(!incoming || typeof incoming!=='object' || Array.isArray(incoming)) throw new Error('Invalid backup');
+      const keys=Object.keys(incoming);
+      const bookingCount=keys.filter(k=>k!=='__cashLedger' && incoming[k] && incoming[k].booking).length;
+      const hasCash=Array.isArray(incoming.__cashLedger);
+      if(!confirm('Restore this backup?\n\n'+bookingCount+' booking(s)'+(hasCash?' and cash entries':'')+' will be restored.\nCurrent entries will be replaced by the backup.')) return;
+      // Keep only a clean object and restore the complete backup, including cash ledger.
+      db=incoming;
+      save();
+      cur='';
+      if($('acct')) $('acct').innerHTML='';
+      if($('find')) $('find').value='';
+      renderBookings('');
+      renderCustomers('');
+      renderHome();
+      renderReport();
+      renderCashLedger();
+      updateBackupStatus('Backup restored successfully.');
+      alert('Backup restored successfully. '+bookingCount+' booking(s) restored.');
+    }catch(e){
+      console.error(e);
+      alert('Invalid backup file. Please select a Sri Square Accounts .json backup.');
+    }finally{ input.value=''; }
+  };
+  reader.readAsText(file);
+}
+function autoBackupNotice(){ const t=localStorage.getItem('ssdb_backup_time'); return t ? 'Last backup: '+new Date(t).toLocaleString('en-IN') : 'No backup created yet'; }
+function resetBookingForm(){
+  $('no').value='';
+  $('date').value='';
+  $('event').value='';
+  $('name').value='';
+  $('phone').value='';
+  $('bt').value='0';
+  $('ba').value='0';
+  if($('bam')) $('bam').value='cash';
+  if($('bpaynote')) $('bpaynote').value='';
+  $('notes').value='';
+}
+
+function toggleMenu(){ $('menuPanel').classList.toggle('hidden'); }
+function closeMenu(){ const p=$('menuPanel'); if(p) p.classList.add('hidden'); const c=$('menuCheck'); if(c) c.checked=false; }
+
+function setupMenu(){
+  const toggle=$('menuToggleBtn'), panel=$('menuPanel');
+  if(!toggle || !panel) return;
+  panel.querySelectorAll('[data-tab]').forEach(btn=>btn.addEventListener('click', function(e){
+    e.preventDefault(); e.stopPropagation(); tab(this.getAttribute('data-tab')); closeMenu();
+  }));
+}
+
+function tab(x){
+  ['home','bookings','saved','customers','accounts','reports','cash'].forEach(i=>$(i).classList.toggle('hidden',i!==x));
+  if(x==='home'){ renderHome(); }
+  if(x==='bookings'){ resetBookingForm(); }
+  if(x==='saved')renderBookings('');
+  if(x==='customers')renderCustomers('');
+  if(x==='reports')renderReport();
+  if(x==='cash'){ if($('cashDate') && !$('cashDate').value) $('cashDate').value=new Date().toISOString().slice(0,10); renderCashLedger(); }
+}
+
+function saveBooking(){
+  let k=$('no').value.trim();
+  if(!k)return alert('Enter Booking / Serial No.');
+
+  let old=db[k]||{};
+  db[k]={...old,booking:{
+    date:$('date').value,
+    event:$('event').value,
+    name:$('name').value,
+    phone:$('phone').value,
+    total:n($('bt').value),
+    advance:n($('ba').value),
+    advanceMode:$('bam')?.value||'cash',
+    paymentNote:$('bpaynote')?.value||'',
+    notes:$('notes').value
+  },account:old.account||{
+    rent:n($('bt').value),
+    advance:n($('ba').value),
+    advanceMode:$('bam')?.value||'cash',
+    rate:18,
+    expenses:[]
+  }};
+
+  save();
+  resetBookingForm();
+  renderBookings('');
+  if(!$('saved').classList.contains('hidden')) renderBookings('');
+  showBookingSaved(k);
+}
+
+function saveBookingAndWhatsApp(){
+  let k=$('no').value.trim();
+  if(!k)return alert('Enter Booking / Serial No.');
+  let phone=$('phone').value.trim();
+  if(!phone)return alert('Enter customer phone number for WhatsApp.');
+  saveBooking();
+  setTimeout(()=>whatsappBookingConfirmation(k),100);
+}
+
+function showBookingSaved(k){
+  let b=db[k]?.booking||{};
+  let old=document.getElementById('savedConfirm'); if(old) old.remove();
+  let box=document.createElement('div'); box.id='savedConfirm'; box.className='savedConfirm';
+  box.innerHTML=`<div><b>✅ Booking ${esc(k)} saved successfully</b><br><span>Send the booking confirmation to the customer on WhatsApp now.</span></div><div class="confirmBtns"><button onclick="whatsappBookingConfirmation('${esc(k)}')">💬 WhatsApp</button><button onclick="bookingConfirmationImage('${esc(k)}')">🖼️ Share Image</button><button class="secondary" onclick="this.closest('#savedConfirm').remove()">Close</button></div>`;
+  document.body.appendChild(box);
+}
+
+function togglePaymentCleared(k){if(!db[k]?.booking)return;const b=db[k].booking; if(isPaymentCleared(b)){if(!confirm('Mark payment as pending?'))return;b.paymentCleared=false;save();renderBookings('');renderReport();if(cur===k)openAccount(k);if(!$('cash').classList.contains('hidden'))renderCashLedger();return;}const mode=$( 'a_finalPaymentMode')?.value || db[k].account?.finalPaymentMode || 'cash';if(!confirm('Mark this booking as Payment Cleared?\nFinal balance will be counted as received using: '+modeLabel(mode)+'.'))return;b.paymentCleared=true;db[k].account=db[k].account||{};db[k].account.finalPaymentMode=mode;db[k].account.paymentClearedAt=new Date().toISOString();save();renderBookings('');renderReport();if(cur===k)openAccount(k);if(!$('cash').classList.contains('hidden'))renderCashLedger();alert('Payment Cleared. Cash Balance updated.');}
+function modeLabel(m){return m==='company'?'Company Account':m==='upi'?'UPI':'Cash';}
+
+function renderBookings(q=''){q=q.toLowerCase();$('list').innerHTML=Object.entries(db).filter(([k,v])=>k!=='__cashLedger' && (k+' '+(v.booking?.name||'')+' '+(v.booking?.phone||'')).toLowerCase().includes(q)).map(([k,v])=>{const b=v.booking||{};const cleared=isPaymentCleared(b);return `<div class=item>
+  <div onclick="tab('accounts');$('find').value='${k}';openAccount('${k}')">
+    <b>${k}</b> — ${b.event||''}<br>
+    <span class=muted>${b.name||''} • ${b.phone||''}</span><br>
+    <span class="paymentStatus ${cleared?'cleared':''}">${cleared?'✅ Payment Cleared':'⏳ Payment Pending'}</span>
+  </div>
+  <button onclick="event.stopPropagation();whatsappBookingConfirmation('${k}')">💬 Resend Confirmation</button><button onclick="event.stopPropagation();bookingConfirmationImage('${k}')">🖼️ Resend Image</button><button class="paymentBtn ${cleared?'clear':''}" onclick="event.stopPropagation();togglePaymentCleared('${k}')">${cleared?'↩️ Mark Pending':'✅ Payment Cleared'}</button><button class="deleteBtn" onclick="event.stopPropagation();deleteBooking('${k}')">🗑️ Delete</button>
+</div>`}).join('')||'<span class=muted>No bookings yet.</span>'}
+function deleteBooking(k){
+  const b=db[k]?.booking||{};
+  const label=[k,b.name,b.event].filter(Boolean).join(' • ');
+  if(!confirm('Delete '+label+'?\n\nThis will permanently delete the booking, account, expenses and report for this ID.')) return;
+  delete db[k];
+  save();
+  if(cur===k){cur=''; $('acct').innerHTML=''; $('find').value='';}
+  renderBookings('');
+  if(document.getElementById('saved') && !$('saved').classList.contains('hidden')) renderBookings('');renderCustomers('');if(document.getElementById('reports') && !$('reports').classList.contains('hidden')) renderReport();
+  alert(k+' deleted.');
+}
+
+function openAccount(k){if(!db[k]){$('acct').innerHTML='';return}cur=k;let b=db[k].booking||{},a=db[k].account||{};a.expenses=a.expenses||[];$('acct').innerHTML=`<div class=card><b>${k}</b><div class=muted>${b.event||''} • ${b.name||''} • ${b.phone||''}</div>
+<h2>INCOME / COLLECTION</h2>${field('Rent total','rent',a.rent??b.total)}${field('Advance (-)','advance',a.advance??b.advance)}${selectField('1st Advance Payment Mode','advanceMode',a.advanceMode??b.advanceMode??'cash')} ${field('2nd Advance Received (-)','advance2',a.advance2??0)}${selectField('2nd Advance Payment Mode','advance2Mode',a.advance2Mode??'cash')}${out('Rent bal.','rb')}${field('Water','water',a.water)}${field('Power Units','units',a.units)}${field('Power Rate','rate',a.rate??18)}${out('Power Amount','power')}${field('Decoration','decoration',a.decoration)}${field('Lighting','lighting',a.lighting)}${field('Kitchen Equipment (if required)','kitchen',a.kitchen??0)}
+<div class="otherIncomeBox"><b>OTHER CHARGES — BILL TO CUSTOMER</b><div id="oi">${(a.otherIncomes||[]).map((e,i)=>otherIncome(e,i)).join('')}</div><button class="secondary" onclick="addOtherIncome()">＋ Add Income</button></div>
+${out('TOTAL','income',1)}
+<h2>EXPENSES</h2><div id=ex>${a.expenses.map((e,i)=>expense(e,i)).join('')}</div><button class=secondary onclick="addEx()">＋ Add Expense</button>${out('EXP Total','exp',1)}${out('TOTAL - EXP','final',1)}${selectField('Final Payment Mode','finalPaymentMode',a.finalPaymentMode??'cash')}
+<button onclick="saveAccount()">Save Account</button><button class="whatsappBtn finalBillBtn" onclick="saveAccountAndFinalBillWhatsApp()">📲 EVENT BILL — SEND ON WHATSAPP</button><button class="secondary" onclick="finalBillImage('${k}')">🖼️ EVENT BILL — SHARE IMAGE</button><button class="paymentBtn ${isPaymentCleared(b)?'clear':''}" onclick="togglePaymentCleared('${k}')">${isPaymentCleared(b)?'↩️ Mark Payment Pending':'✅ Mark Payment Cleared'}</button><div class="paymentStatus ${isPaymentCleared(b)?'cleared':''}">${isPaymentCleared(b)?'✅ Payment Cleared':'⏳ Payment Pending'}</div></div>`;calc();}
+function field(label,id,val){return `<div class=row><span>${label}</span><input id=a_${id} type=number value="${val||0}" oninput="calc()"></div>`}function selectField(label,id,val){return `<div class=row><span>${label}</span><select id=a_${id} style="max-width:190px;padding:9px;border:1px solid #d8e0ea;border-radius:9px;background:#fff"><option value="cash" ${val==='cash'?'selected':''}>Cash</option><option value="company" ${val==='company'?'selected':''}>Company Account</option><option value="upi" ${val==='upi'?'selected':''}>UPI</option></select></div>`}function out(label,id,big){return `<div class="row total"><span>${label}</span><span id=o_${id}>₹0</span></div>`}
+function expense(e,i){return `<div class=row><input class=exn value="${(e.name||'').replaceAll('"','&quot;')}"><input class=exa type=number value="${e.amount||0}" oninput="calc()"></div>`}
+function otherIncome(e={},i){return `<div class="row oirow"><input class="oin" type="text" placeholder="Customer charge details" value="${esc(e.name||'')}"><input class="oia" type="number" placeholder="Amount" value="${e.amount||0}" oninput="calc()"><button class="removeBtn" onclick="this.parentElement.remove();calc()">×</button></div>`}
+function addOtherIncome(){let c=$('oi');c.insertAdjacentHTML('beforeend',otherIncome({},c.children.length));}
+
+function addEx(){$('ex').insertAdjacentHTML('beforeend',expense({name:'',amount:0},0));}
+function calc(){if(!cur)return;let a=id=>n($('a_'+id)?.value),rb=a('rent')-a('advance')-a('advance2'),p=a('units')*a('rate'),oi=[...document.querySelectorAll('#oi .oia')].reduce((s,x)=>s+n(x.value),0),inc=a('rent')+a('water')+p+a('decoration')*0.30+a('lighting')*0.30+a('kitchen')+oi,ex=[...document.querySelectorAll('.exa')].reduce((s,x)=>s+n(x.value),0);if($('o_rb')){let row=$('o_rb').closest('.row');if(row)row.style.display=db[cur]?.booking?.paymentCleared?'':'none';$('o_rb').textContent=money(rb);}['power','income','exp','final'].forEach((id,i)=>$('o_'+id).textContent=money([p,inc,ex,inc-ex][i]));}
+function saveAccount(showAlert=true){let a=id=>n($('a_'+id)?.value),ex=[...document.querySelectorAll('#ex .row')].map(r=>({name:r.querySelector('.exn').value,amount:n(r.querySelector('.exa').value)}));db[cur].account={rent:a('rent'),advance:a('advance'),advance2:a('advance2'),water:a('water'),units:a('units'),rate:a('rate'),advanceMode:$('a_advanceMode')?.value||'cash',advance2Mode:$('a_advance2Mode')?.value||'cash',finalPaymentMode:$('a_finalPaymentMode')?.value||'cash',decoration:a('decoration'),lighting:a('lighting'),kitchen:a('kitchen'),otherIncomes:[...document.querySelectorAll('#oi .oirow')].map(r=>({name:r.querySelector('.oin').value,amount:n(r.querySelector('.oia').value)})),expenses:ex};save();renderReport();renderCashLedger();if(showAlert) alert('Account saved for '+cur);}
+function isPaymentCleared(b){ return b && (b.paymentCleared===true || b.paymentCleared===1 || b.paymentCleared==='1' || b.paymentCleared==='TRUE' || b.paymentCleared==='True' || b.paymentCleared==='true'); }
+function reportData(k){let b=db[k]?.booking||{},a=db[k]?.account||{};let rent=n(a.rent??b.total),adv=n(a.advance??b.advance),adv2=n(a.advance2),water=n(a.water),units=n(a.units),rate=n(a.rate||18),power=units*rate,deco=n(a.decoration),light=n(a.lighting),kitchen=n(a.kitchen),decoCommission=deco*0.30,lightCommission=light*0.30,otherIncomes=(a.otherIncomes||[]).filter(e=>e&&((String(e.name||'').trim())||n(e.amount))),otherIncome=otherIncomes.reduce((s,e)=>s+n(e.amount),0),financialOtherIncomes=otherIncomes.filter(e=>!String(e.name||'').toLowerCase().includes('mini')),financialOtherIncome=financialOtherIncomes.reduce((s,e)=>s+n(e.amount),0),rentbal=rent-adv-adv2,grossTotal=rent+water+power+decoCommission+lightCommission+kitchen,financialGrossTotal=grossTotal+financialOtherIncome,total=financialGrossTotal,expenses=a.expenses||[],ex=expenses.reduce((s,e)=>s+n(e.amount),0),final=total-ex;let cashAdvance=0;if((a.advanceMode??b.advanceMode??'cash')==='cash')cashAdvance+=adv;if((a.advance2Mode??'cash')==='cash')cashAdvance+=adv2;let cashFinal=0;if(isPaymentCleared(b)){let finalMode=a.finalPaymentMode||'cash';let customerGrossCharges=rent+water+power+deco+light+kitchen+otherIncome;let finalPaid=Math.max(0,customerGrossCharges-adv-adv2);if(finalMode==='cash')cashFinal=finalPaid;}let cashReceived=cashAdvance+cashFinal;let cashTotalBalance=cashReceived-ex;return {b,a,rent,adv,adv2,water,units,rate,power,deco,light,kitchen,decoCommission,lightCommission,otherIncome,otherIncomes,financialOtherIncome,financialOtherIncomes,rentbal,grossTotal,financialGrossTotal,total,expenses,ex,final,cashAdvance,cashFinal,cashReceived,cashTotalBalance};}
+function reportText(k){let d=reportData(k),b=d.b;let date=b.date?new Date(b.date+'T00:00:00').toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):'';let ex=d.expenses.filter(e=>e.name||n(e.amount)).map(e=>`${e.name||'Expense'} : ${money(e.amount)}`).join('\n')||'No expenses';return `SRI SQUARE ACCOUNTS\n\n${k}  |  ${date}${b.event?'  |  '+b.event:''}\nCustomer: ${b.name||'-'}${b.phone?'  |  '+b.phone:''}\nRemarks: ${b.notes||'-'}\n\nINCOME / COLLECTION\nRent total : ${money(d.rent)}\nAdvance Received : ${money(d.adv)} (${modeLabel(d.a.advanceMode??d.b.advanceMode??'cash')})\n2nd Advance Received : ${money(d.adv2)} (${modeLabel(d.a.advance2Mode??'cash')})\n${isPaymentCleared(b)?`Rent bal. : ${money(d.rentbal)}\n`:''}Water : ${money(d.water)}\nPower Units : ${money(d.units)} × ${money(d.rate)} = ${money(d.power)}\nDecoration @30% : ${money(d.decoCommission)}\nLighting @30% : ${money(d.lightCommission)}\n${d.kitchen?`Kitchen Equipment : ${money(d.kitchen)}\n`:''}${d.otherIncomes?.length ? d.otherIncomes.map(e=>`Other Charge - ${e.name||'Charge'} : ${money(e.amount)}`).join('\\n') : ''}\nTOTAL = ${money(d.total)}\n\nEXPENSES\n${ex}\nEXP Total = ${money(d.ex)}\n\nTOTAL - EXP = ${money(d.total)} - ${money(d.ex)}\nTOTAL CASH RECEIVED = ${money(d.cashReceived)}\nTOTAL BAL AVAILABLE = ${money(d.cashTotalBalance)}`;}
+function saveAccountAndFinalBillWhatsApp(){
+  saveAccount(false);
+  whatsappFinalBill(cur);
+}
+function whatsappFinalBill(k){
+  let d=reportData(k),b=d.b,date=b.date?new Date(b.date+'T00:00:00').toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):'-';
+  let lines=[`Rent : ₹${money(d.rent)}`];
+  if(d.water) lines.push(`Water : ₹${money(d.water)}`);
+  if(d.power) lines.push(`Power : ${money(d.units)} × ₹${money(d.rate)} = ₹${money(d.power)}`);
+  if(d.deco) lines.push(`Decoration : ₹${money(d.deco)}`);
+  if(d.light) lines.push(`Lighting : ₹${money(d.light)}`);
+  if(d.kitchen) lines.push(`Kitchen Equipment : ₹${money(d.kitchen)}`);
+  (d.otherIncomes||[]).filter(e=>e.name||n(e.amount)).forEach(e=>lines.push(`${e.name||'Other Charge'} : ₹${money(e.amount)}`));
+  let charges=d.rent+d.water+d.power+d.deco+d.light+d.kitchen+d.otherIncome;
+  let msg=`SRI SQUARE CONVENTION
+
+FINAL BILL
+
+Booking No: ${k}
+Customer: ${b.name||'-'}
+Event: ${b.event||'-'}
+Event Date: ${date}
+
+CHARGES
+${lines.join('\n')}
+
+TOTAL CHARGES: ₹${money(charges)}
+Advance Received: ₹${money(d.adv)}
+2nd Advance Received: ₹${money(d.adv2)}
+BALANCE DUE: ₹${money(charges-d.adv-d.adv2)}\nGST, if applicable, will be charged extra.${b.notes?'\n\nRemarks: '+b.notes:''}
+
+Thank you for choosing Sri Square Convention.`;
+  let phone=(b.phone||'').replace(/\D/g,'');
+  if(phone.length===10) phone='91'+phone;
+  if(!phone){alert('Customer phone number is missing.');return;}
+  window.open('https://wa.me/'+phone+'?text='+encodeURIComponent(msg),'_blank');
+}
+
+function whatsappBookingConfirmation(k){
+  let b=db[k]?.booking||{};
+  let total=n(b.total),adv=n(b.advance),bal=total-adv;
+  let date=b.date?new Date(b.date+'T00:00:00').toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):'-';
+  let msg=`SRI SQUARE CONVENTION\n\nBooking Confirmation\n\nBooking No: ${k}\nCustomer Name: ${b.name||'-'}\nEvent: ${b.event||'-'}\nEvent Date: ${date}\nTotal Booking Amount: ₹${money(total)}\nAdvance Received: ₹${money(adv)}\nBalance Amount: ₹${money(bal)}\n${b.notes?'Remarks: '+b.notes+'\n':''}\nThank you for choosing Sri Square Convention.\nWe look forward to making your event special!`;
+  let phone=(b.phone||'').replace(/\D/g,'');
+  if(phone.length===10) phone='91'+phone;
+  let url='https://wa.me/'+phone+'?text='+encodeURIComponent(msg);
+  window.open(url,'_blank');
+}
+
+function shareBookingReport(k){let text=reportText(k);if(navigator.share){navigator.share({title:'Sri Square Account - '+k,text}).catch(e=>{if(e.name!=='AbortError')console.error(e)});}else if(navigator.clipboard){navigator.clipboard.writeText(text).then(()=>alert('Report copied. You can paste it into WhatsApp or any app.'));}else alert(text);}
+
+async function bookingConfirmationImage(k){
+  let b=db[k]?.booking||{};
+  let total=n(b.total),adv=n(b.advance),bal=total-adv;
+  let date=b.date?new Date(b.date+'T00:00:00').toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):'-';
+  const escS=v=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const plain=v=>Math.round(Number(v)||0).toLocaleString('en-IN');
+  const terms=[
+    'An advance amount of 50% is required to block the date. The booking amount is non-refundable. Date change is allowed only subject to availability.',
+    'The final bill is based on actual usage, including electricity, diesel, personnel and other applicable charges. Balance must be paid before the event.',
+    'Hall usage timing must be strictly followed. Extra hours beyond 12 hours will be charged at ₹_____ per hour, subject to availability.',
+    'The client is responsible for proper waste handling. Excess cleaning charges will be billed additionally.',
+    'Any damage to the property, furniture, electrical fittings, washrooms, dining tables or chairs will be charged at actual cost. Use of firecrackers, open flames or gas cylinders inside the hall without management approval is strictly prohibited.',
+    'Management is not responsible for vehicle damage or theft in the parking area. Payments are accepted via Cash / UPI / Bank Transfer.',
+    'GST will be charged extra as per government norms (if applicable). Management reserves the right to modify these terms and conditions without prior notice.'
+  ];
+  const width=1000,height=1680;
+  const wrap=(text,max=100)=>{let words=text.split(' '),lines=[],line='';for(const w of words){const t=line?line+' '+w:w;if(t.length>max){if(line)lines.push(line);line=w}else line=t}if(line)lines.push(line);return lines};
+  let ty=1085, termSvg='';
+  terms.forEach(t=>{for(const line of wrap(t,100)){termSvg+=`<text x="82" y="${ty}" class="term">${escS(line)}</text>`;ty+=24}ty+=10});
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+  <rect width="1000" height="1680" fill="#f8fafc"/>
+  <rect x="20" y="20" width="960" height="1640" rx="28" fill="#fff" stroke="#e5d7b2" stroke-width="2"/>
+  <rect x="55" y="52" width="890" height="130" rx="20" fill="#fffdf8"/>
+  <rect x="62" y="58" width="92" height="92" rx="10" fill="none" stroke="#dcae32" stroke-width="4"/>
+  <text x="108" y="128" text-anchor="middle" class="logo">S</text>
+  <text x="180" y="94" class="brand">SRI SQUARE</text>
+  <text x="182" y="132" class="subbrand">CONVENTION</text>
+  <text x="180" y="163" class="tag">CELEBRATE  |  CONNECT  |  CREATE MEMORIES</text>
+  <text x="930" y="96" text-anchor="end" class="script">Your Special Moments</text>
+  <text x="930" y="132" text-anchor="end" class="script">Our Privilege</text>
+  <line x1="62" y1="205" x2="938" y2="205" stroke="#dcae32" stroke-width="3"/>
+  <rect x="250" y="230" width="500" height="74" rx="18" fill="#fff7df" stroke="#e2b73d" stroke-width="2"/>
+  <text x="500" y="280" text-anchor="middle" class="title">BOOKING CONFIRMATION</text>
+  <rect x="55" y="330" width="890" height="170" rx="18" fill="#eef7ff" stroke="#d7e8f7"/>
+  <text x="80" y="370" class="label">Booking No.</text><text x="360" y="370" class="value">${escS(k)}</text>
+  <text x="80" y="410" class="label">Customer</text><text x="360" y="410" class="value">${escS(b.name||'-')}</text>
+  <text x="80" y="450" class="label">Event</text><text x="360" y="450" class="value">${escS(b.event||'-')}</text>
+  <text x="80" y="490" class="label">Phone</text><text x="360" y="490" class="value">${escS(b.phone||'-')}</text>
+  <text x="600" y="370" class="label">Event Date</text><text x="915" y="370" text-anchor="end" class="value">${escS(date)}</text>
+  <rect x="55" y="530" width="890" height="58" rx="14" fill="#dceefe"/>
+  <text x="80" y="568" class="section">BOOKING DETAILS</text>
+  <text x="80" y="638" class="item">Total Booking Amount</text><text x="915" y="638" text-anchor="end" class="amount">₹${plain(total)}</text>
+  <line x1="75" y1="660" x2="925" y2="660" stroke="#dce3ea" stroke-width="2"/>
+  <text x="80" y="705" class="item">Advance Received</text><text x="915" y="705" text-anchor="end" class="amount">₹${plain(adv)}</text>
+  <rect x="55" y="745" width="890" height="78" rx="14" fill="#fff0bf" stroke="#e8c55e"/>
+  <text x="80" y="795" class="balanceLabel">BALANCE AMOUNT</text><text x="915" y="795" text-anchor="end" class="balanceValue">₹${plain(bal)}</text>
+  <rect x="55" y="850" width="890" height="86" rx="16" fill="#fffaf0"/>
+  <text x="80" y="884" class="remarkLabel">Remarks</text>
+  <text x="80" y="915" class="remark">${escS(b.notes||'-')}</text>
+  <rect x="55" y="965" width="890" height="58" rx="14" fill="#dceefe"/>
+  <text x="80" y="1003" class="section">TERMS &amp; CONDITIONS</text>
+  ${termSvg}
+  <text x="500" y="1570" text-anchor="middle" class="thanks">Thank you for choosing Sri Square Convention.</text>
+  <text x="500" y="1600" text-anchor="middle" class="thanks2">We look forward to making your event memorable.</text>
+  <rect x="55" y="1618" width="890" height="28" rx="10" fill="#eef7ff"/>
+  <text x="75" y="1638" class="footer">8801234288  /  9121013113</text>
+  <text x="925" y="1638" text-anchor="end" class="footer">Old Guntur, Guntur, Andhra Pradesh</text>
+  <style>
+    .logo{font:700 70px Georgia;fill:#dcae32}.brand{font:700 32px Georgia;fill:#173b70;letter-spacing:2px}.subbrand{font:500 24px Arial;fill:#173b70;letter-spacing:7px}.tag{font:600 12px Arial;fill:#c28d18;letter-spacing:2px}.script{font:italic 21px Georgia;fill:#9b6d14}.title{font:700 31px Georgia;fill:#173b70}.label{font:600 18px Arial;fill:#607086}.value{font:700 20px Arial;fill:#17345e}.section{font:700 19px Arial;fill:#173b70;letter-spacing:1px}.item{font:500 21px Arial;fill:#263b58}.amount{font:700 22px Arial;fill:#173b70}.balanceLabel{font:700 24px Arial;fill:#173b70}.balanceValue{font:800 28px Arial;fill:#173b70}.remarkLabel{font:700 17px Arial;fill:#607086}.remark{font:500 18px Arial;fill:#263b58}.term{font:500 14px Arial;fill:#273b56}.thanks{font:700 21px Arial;fill:#173b70}.thanks2{font:500 17px Arial;fill:#53657a}.footer{font:600 11px Arial;fill:#173b70;letter-spacing:.2px}
+  </style></svg>`;
+  try{
+    let blob=new Blob([svg],{type:'image/svg+xml'}),url=URL.createObjectURL(blob),img=new Image();
+    img.onload=async()=>{let c=document.createElement('canvas');c.width=2000;c.height=3360;let ctx=c.getContext('2d');ctx.fillStyle='#f8fafc';ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(url);c.toBlob(async png=>{let file=new File([png],'Booking_Confirmation_'+k+'.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({title:'Booking Confirmation - '+k,text:'Booking confirmation from Sri Square Convention.',files:[file]});}catch(e){if(e.name!=='AbortError') alert('Could not share booking confirmation image.');}}else{let a=document.createElement('a');a.href=URL.createObjectURL(png);a.download='Booking_Confirmation_'+k+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);alert('Booking confirmation image saved. You can share it to WhatsApp from Photos/Files.');}},'image/png');};img.onerror=()=>{URL.revokeObjectURL(url);alert('Could not create booking confirmation image on this device.');};img.src=url;
+  }catch(e){alert('Could not create booking confirmation image on this device.');}
+}
+
+async function finalBillImage(k){
+  let d=reportData(k),b=d.b,date=b.date?new Date(b.date+'T00:00:00').toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):'-';
+  const escS=v=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const grossCharges=d.rent+d.water+d.power+d.deco+d.light+d.kitchen+d.otherIncome;
+  const plain=v=>Math.round(Number(v)||0).toLocaleString('en-IN');
+  const rows=[
+    ['Rent Total',money(d.rent)],['Water',money(d.water)],['Power ('+plain(d.units)+' Units × ₹'+plain(d.rate)+')',money(d.power)],['Decoration',money(d.deco)],['Lighting',money(d.light)]
+  ];
+  if(d.kitchen) rows.push(['Kitchen Equipment',money(d.kitchen)]);
+  (d.otherIncomes||[]).filter(e=>e.name||n(e.amount)).forEach(e=>rows.push([e.name||'Other Charge',money(e.amount)]));
+  const rowH=52, tableTop=470, tableHeader=56;
+  let y=tableTop+tableHeader;
+  let body=rows.map((r,i)=>{let yy=y+i*rowH;return `<rect x="45" y="${yy}" width="910" height="${rowH}" fill="${i%2?'#f7faff':'#ffffff'}"/><line x1="45" y1="${yy+rowH}" x2="955" y2="${yy+rowH}" stroke="#d9e6f2" stroke-width="1"/><text x="75" y="${yy+34}" class="item">${escS(r[0])}</text><text x="925" y="${yy+34}" text-anchor="end" class="amount">₹${escS(r[1].replace('₹',''))}</text>`}).join('');
+  let totalY=y+rows.length*rowH;
+  let adv1Y=totalY+58,adv2Y=adv1Y+48,balanceY=adv2Y+64;
+  let footerY=balanceY+120, height=footerY+260;
+  let svg=`<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="${height}" viewBox="0 0 1000 ${height}">
+  <rect width="1000" height="${height}" fill="#f8fbff"/>
+  <rect x="28" y="28" width="944" height="${height-56}" rx="28" fill="#fff" stroke="#dbe8f2" stroke-width="2"/>
+  <rect x="28" y="28" width="944" height="150" rx="28" fill="#ffffff"/>
+  <rect x="28" y="152" width="944" height="26" fill="#ffffff"/>
+  <rect x="62" y="55" width="78" height="78" rx="10" fill="none" stroke="#dcae31" stroke-width="4"/>
+  <text x="101" y="112" text-anchor="middle" class="logo">S</text>
+  <text x="162" y="83" class="brand">SRI SQUARE</text>
+  <text x="164" y="114" class="subbrand">CONVENTION</text>
+  <text x="164" y="140" class="tag">CELEBRATE  |  CONNECT  |  CREATE MEMORIES</text>
+  <text x="930" y="82" text-anchor="end" class="script">Your Special Moments</text>
+  <text x="930" y="114" text-anchor="end" class="script">Our Privilege</text>
+  <line x1="62" y1="178" x2="938" y2="178" stroke="#dcae31" stroke-width="3"/>
+  <rect x="325" y="205" width="350" height="70" rx="18" fill="#fff7df" stroke="#e7bd55" stroke-width="2"/>
+  <text x="500" y="252" text-anchor="middle" class="title">EVENT BILL</text>
+  <text x="930" y="248" text-anchor="end" class="date">Date : ${escS(date)}</text>
+  <rect x="55" y="300" width="890" height="125" rx="18" fill="#f4f9fd" stroke="#e1edf5"/>
+  <text x="78" y="335" class="metaLabel">Booking No.</text><text x="290" y="335" class="metaValue">${escS(k)}</text>
+  <text x="78" y="368" class="metaLabel">Customer</text><text x="290" y="368" class="metaValue">${escS(b.name||'-')}</text>
+  <text x="78" y="401" class="metaLabel">Event</text><text x="290" y="401" class="metaValue">${escS(b.event||'-')}</text>
+  <text x="610" y="335" class="metaLabel">Event Date</text><text x="930" y="335" text-anchor="end" class="metaValue">${escS(date)}</text>
+  <text x="610" y="368" class="metaLabel">Phone</text><text x="930" y="368" text-anchor="end" class="metaValue">${escS(b.phone||'-')}</text>
+  <text x="610" y="401" class="thank">Thank you for choosing us</text>
+  <rect x="45" y="${tableTop}" width="910" height="${tableHeader}" rx="12" fill="#eaf4fc" stroke="#d6e7f3"/>
+  <text x="75" y="${tableTop+36}" class="th">PARTICULARS</text><text x="925" y="${tableTop+36}" text-anchor="end" class="th">AMOUNT (₹)</text>
+  ${body}
+  <rect x="45" y="${totalY}" width="910" height="58" fill="#edf5fc" stroke="#dbe9f3"/>
+  <text x="75" y="${totalY+38}" class="totalLabel">TOTAL CHARGES</text><text x="925" y="${totalY+38}" text-anchor="end" class="totalValue">₹${escS(money(grossCharges).replace('₹',''))}</text>
+  <text x="75" y="${adv1Y}" class="deduct">1st Advance (-)</text><text x="925" y="${adv1Y}" text-anchor="end" class="deduct">₹${escS(money(d.adv).replace('₹',''))}</text>
+  <text x="75" y="${adv2Y}" class="deduct">2nd Advance (-)</text><text x="925" y="${adv2Y}" text-anchor="end" class="deduct">₹${escS(money(d.adv2).replace('₹',''))}</text>
+  <rect x="45" y="${balanceY-38}" width="910" height="72" rx="12" fill="#f8dc8a"/>
+  <text x="75" y="${balanceY+9}" class="balanceLabel">BALANCE DUE</text><text x="925" y="${balanceY+9}" text-anchor="end" class="balanceValue">₹${escS(money(grossCharges-d.adv-d.adv2).replace('₹',''))}</text>
+  <rect x="45" y="${footerY}" width="910" height="120" rx="16" fill="#f1faed" stroke="#bcdcae" stroke-width="2"/>
+  <text x="75" y="${footerY+34}" class="pay">Kindly arrange payment of the balance at your earliest convenience.</text>
+  <text x="75" y="${footerY+64}" class="small">For any queries, please feel free to contact us.</text>
+  <text x="75" y="${footerY+94}" class="small">GST, if applicable, will be charged extra.</text>
+  <text x="925" y="${footerY+55}" text-anchor="end" class="thanks">Thank You</text>
+  <text x="500" y="${footerY+155}" text-anchor="middle" class="closing">Thank you for choosing Sri Square Convention.</text>
+  <text x="500" y="${footerY+180}" text-anchor="middle" class="small">We look forward to making your event a memorable one.</text>
+  <rect x="28" y="${height-58}" width="944" height="58" rx="0" fill="#eaf4fc"/>
+  <text x="55" y="${height-23}" class="footerDark">Old Guntur, Guntur, Andhra Pradesh</text>
+  <text x="500" y="${height-23}" text-anchor="middle" class="footerDark">8801234288  /  9121013113</text>
+  <text x="945" y="${height-23}" text-anchor="end" class="footerDark">CELEBRATE  |  CONNECT  |  CREATE MEMORIES</text>
+  <style>
+    .logo{font:700 58px Georgia;fill:#dcae31}.brand{font:700 30px Georgia;fill:#173b73;letter-spacing:2px}.subbrand{font:500 22px Arial;fill:#173b73;letter-spacing:6px}.tag{font:600 10px Arial;fill:#b58216;letter-spacing:1.5px}.script{font:italic 21px Georgia;fill:#8c6214}.title{font:700 40px Georgia;fill:#173b73}.date{font:600 18px Arial;fill:#273142}.metaLabel{font:600 17px Arial;fill:#64748b}.metaValue{font:700 19px Arial;fill:#173b73}.thank{font:italic 17px Georgia;fill:#9b6b16}.th{font:700 19px Arial;fill:#173b73;letter-spacing:1px}.item{font:500 20px Arial;fill:#243247}.amount{font:700 20px Arial;fill:#243247}.totalLabel{font:700 22px Arial;fill:#173b73}.totalValue{font:700 23px Arial;fill:#173b73}.deduct{font:500 19px Arial;fill:#273142}.balanceLabel{font:700 25px Arial;fill:#173b73}.balanceValue{font:800 27px Arial;fill:#173b73}.pay{font:700 18px Arial;fill:#18351d}.small{font:500 16px Arial;fill:#31423a}.thanks{font:italic 25px Georgia;fill:#7c5b1a}.closing{font:700 20px Arial;fill:#173b73}.footerDark{font:600 12px Arial;fill:#173b73;letter-spacing:.3px}
+  </style></svg>`;
+  try{
+    let blob=new Blob([svg],{type:'image/svg+xml'}),url=URL.createObjectURL(blob),img=new Image();
+    img.onload=async()=>{let c=document.createElement('canvas');c.width=2000;c.height=Math.round(height*2);let ctx=c.getContext('2d');ctx.fillStyle='#f8fbff';ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(url);c.toBlob(async png=>{let file=new File([png],'Event_Bill_'+k+'.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({title:'Event Bill - '+k,text:'Event bill from Sri Square Convention. Kindly arrange payment of the balance at your earliest convenience.',files:[file]});}catch(e){if(e.name!=='AbortError')console.error(e)}}else{let a=document.createElement('a');a.href=URL.createObjectURL(png);a.download='Event_Bill_'+k+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);alert('Event bill image saved. You can share it to WhatsApp from Photos/Files.');}},'image/png');};
+    img.onerror=()=>{URL.revokeObjectURL(url);alert('Could not create bill image on this device. Please use PDF.');};
+    img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+  }catch(e){alert('Could not create bill image on this device. Please use PDF.');}
+}
+
+function pdfBookingReport(k){
+  let d=reportData(k),b=d.b,date=b.date?new Date(b.date+'T00:00:00').toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):'';
+  let ex=d.expenses.filter(e=>e.name||n(e.amount));
+  let rows=ex.length?ex.map(e=>`<div class="line"><span>${esc(e.name||'Expense')}</span><b>${money(e.amount)}</b></div>`).join(''):`<div class="line"><span>No expenses</span><b>₹0</b></div>`;
+  let old=document.getElementById('printSheet'); if(old) old.remove();
+  let box=document.createElement('div'); box.id='printSheet'; box.innerHTML=`<div class="printActions"><button class="backToAppBtn" onclick="closePrintSheet()">← Back to App</button><button onclick="window.print()">📄 Save / Print PDF</button></div><div class="sheet"><div class="head"><h1>SRI SQUARE ACCOUNTS</h1><div><b>${esc(k)}</b>${date?' • '+esc(date):''}${b.event?' • '+esc(b.event):''}</div></div><div class="meta"><div><b>Customer:</b> ${esc(b.name||'-')}</div><div><b>Phone:</b> ${esc(b.phone||'-')}</div></div><div class="remarks"><b>Remarks:</b> ${esc(b.notes||'-')}</div><h2>INCOME / COLLECTION</h2><div class="line"><span>Rent total</span><b>${money(d.rent)}</b></div><div class="line"><span>Advance Received</span><b>${money(d.adv)} <small>(${esc(modeLabel(d.a.advanceMode??d.b.advanceMode??'cash'))})</small></b></div><div class="line"><span>2nd Advance Received</span><b>${money(d.adv2)} <small>(${esc(modeLabel(d.a.advance2Mode??'cash'))})</small></b></div>${isPaymentCleared(b)?`<div class="line"><span>Rent bal.</span><b>${money(d.rentbal)}</b></div>`:""}<div class="line"><span>Water</span><b>${money(d.water)}</b></div><div class="line"><span>Power Units</span><b>${money(d.units)} × ${money(d.rate)} = ${money(d.power)}</b></div><div class="line"><span>Decoration <small>@30%</small></span><b>${money(d.decoCommission)}</b></div><div class="line"><span>Lighting <small>@30%</small></span><b>${money(d.lightCommission)}</b></div>${d.kitchen?`<div class="line"><span>Kitchen Equipment</span><b>${money(d.kitchen)}</b></div>`:''}${d.otherIncomes?.length ? d.otherIncomes.map(e=>`<div class="line"><span>Other Charge - ${esc(e.name||"Charge")}</span><b>${money(e.amount)}</b></div>`).join("") : ""}<div class="line total"><span>TOTAL</span><b>${money(d.total)}</b></div><h2>EXPENSES</h2>${rows}<div class="line total"><span>EXP Total</span><b>${money(d.ex)}</b></div><div class="line total"><span>TOTAL - EXP</span><b>${money(d.total)} - ${money(d.ex)}</b></div><div class="line"><span>Total Cash Received</span><b>${money(d.cashReceived)}</b></div><div class="final">TOTAL BAL AVAILABLE : ${money(d.cashTotalBalance)}</div></div>`;
+  document.body.appendChild(box);
+  window.scrollTo(0,0);
+}
+function closePrintSheet(){let el=document.getElementById('printSheet');if(el)el.remove();window.scrollTo(0,0);}
+window.addEventListener('afterprint',()=>{setTimeout(()=>closePrintSheet(),300);});
+
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+let calCursor=new Date(new Date().getFullYear(),new Date().getMonth(),1);
+function renderHome(){
+  const keys=Object.keys(db).filter(k=>k!=='__cashLedger');
+  let amount=0,adv=0,balance=0;
+  keys.forEach(k=>{const b=db[k].booking||{}; amount+=n(b.total); adv+=n(b.advance); balance+=Math.max(0,n(b.total)-n(b.advance));});
+  if($('hsBookings'))$('hsBookings').textContent=keys.length;
+  if($('hsAmount'))$('hsAmount').textContent=money(amount);
+  if($('hsAdvance'))$('hsAdvance').textContent=money(adv);
+  if($('hsBalance'))$('hsBalance').textContent=money(balance);
+  renderCalendar();
+  const recent=keys.slice().reverse().slice(0,5);
+  $('homeRecent').innerHTML=recent.length?recent.map(k=>{const b=db[k].booking||{};const d=b.date?new Date(b.date+'T00:00:00').toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):'-';const bal=Math.max(0,n(b.total)-n(b.advance));const status=isPaymentCleared(b)?' • ✅ Cleared':'';return `<div class="calBooking"><b>${esc(k)} — ${esc(b.name||'-')}</b><br><span>${esc(b.event||'-')} • ${d} • Balance ${money(bal)}${status}</span></div>`}).join(''):'<span class="muted">No bookings yet.</span>';
+}
+function changeCalMonth(delta){calCursor=new Date(calCursor.getFullYear(),calCursor.getMonth()+delta,1);renderCalendar();}
+function renderCalendar(){
+  const y=calCursor.getFullYear(),m=calCursor.getMonth();
+  $('calMonth').textContent=calCursor.toLocaleDateString('en-IN',{month:'long',year:'numeric'});
+  const first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate();
+  const booked={};Object.entries(db).filter(([k])=>k!=='__cashLedger').forEach(([k,v])=>{const date=v.booking?.date;if(date){if(!booked[date])booked[date]=[];booked[date].push(k);}});
+  const today=new Date();const todayKey=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+  let html=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(x=>`<div class="calDow">${x}</div>`).join('');
+  for(let i=0;i<first;i++)html+='<div class="calDay empty"></div>';
+  for(let d=1;d<=days;d++){const key=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`, ks=booked[key]||[];html+=`<button type="button" class="calDay ${ks.length?'booked':''} ${key===todayKey?'today':''}" onclick="showCalendarDate('${key}')"><div class="calDayNum">${d}</div>${ks.length?`<div class="calDayCount">${ks.length} booking${ks.length>1?'s':''}</div>`:''}</button>`;}
+  $('calendarGrid').innerHTML=html;
+}
+function showCalendarDate(key){
+  const ks=Object.entries(db).filter(([k,v])=>v.booking?.date===key);
+  const title=new Date(key+'T00:00:00').toLocaleDateString('en-IN',{weekday:'long',day:'2-digit',month:'short',year:'numeric'});
+  $('calendarBookings').innerHTML=ks.length?`<b>${esc(title)}</b>`+ks.map(([k,v])=>{const b=v.booking||{};return `<div class="calBooking"><b>${esc(k)} — ${esc(b.name||'-')}</b><br><span>${esc(b.event||'-')} • ${esc(b.phone||'')} • ${money(n(b.total))}</span></div>`}).join(''):`<b>${esc(title)}</b><div class="muted" style="margin-top:6px">No booking on this date.</div>`;
+}
+function renderCustomers(q=''){
+  q=String(q||'').toLowerCase().trim();
+  const rows=Object.entries(db).filter(([k])=>k!=='__cashLedger').map(([k,v])=>{const b=v.booking||{};return {k,b};}).filter(({k,b})=>{
+    const hay=[k,b.name,b.phone,b.event,b.date].join(' ').toLowerCase();
+    return !q||hay.includes(q);
+  });
+  const el=$('customerList'); if(!el)return;
+  el.innerHTML=rows.length?rows.map(({k,b})=>{
+    const phone=String(b.phone||'').replace(/[^0-9+]/g,'');
+    const d=b.date?new Date(b.date+'T00:00:00').toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):'-';
+    const wa=phone?phone.replace(/^\+/,'') : '';
+    return `<div class="customerRow"><b>${esc(b.name||'Unnamed Customer')}</b><div style="font-weight:800;margin-top:3px">${esc(b.phone||'No mobile number')}</div><div class="customerMeta">${esc(k)} • ${esc(b.event||'Event')} • ${d}</div><div class="customerActions">${phone?`<a href="tel:${esc(phone)}">📞 Call</a><a href="https://wa.me/${esc(wa)}" target="_blank" rel="noopener">💬 WhatsApp</a>`:''}<button type="button" onclick="copyCustomerPhone('${esc(phone)}')">📋 Copy</button></div></div>`;
+  }).join(''):'<span class="muted">No customers found.</span>';
+}
+function copyCustomerPhone(phone){if(!phone)return alert('No mobile number available.');if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(phone).then(()=>alert('Mobile number copied.')).catch(()=>alert(phone));}else{alert(phone);}}
+function csvCell(v){return '"'+String(v??'').replace(/"/g,'""')+'"';}
+function downloadCustomersCSV(){
+  const rows=Object.entries(db).filter(([k])=>k!=='__cashLedger').map(([k,v])=>{const b=v.booking||{};return [k,b.name||'',b.phone||'',b.event||'',b.date||'',n(b.total),n(b.advance)];});
+  if(!rows.length)return alert('No customer data to download.');
+  const csv='Booking No.,Customer Name,Mobile Number,Event,Event Date,Booking Amount,Advance Received\n'+rows.map(r=>r.map(csvCell).join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Sri_Square_Customers_'+new Date().toISOString().slice(0,10)+'.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+function getCashLedger(){
+  if(!Array.isArray(db.__cashLedger)) db.__cashLedger=[];
+  return db.__cashLedger;
+}
+function addCashEntry(){
+  const date=$('cashDate').value || new Date().toISOString().slice(0,10);
+  const type=$('cashType').value;
+  const desc=$('cashDesc').value.trim();
+  const amount=n($('cashAmount').value);
+  if(!amount) return alert('Enter an amount.');
+  getCashLedger().push({id:Date.now()+Math.random(),date,type,desc,amount});
+  save();
+  $('cashDesc').value='';$('cashAmount').value='';
+  renderCashLedger();
+}
+function deleteCashEntry(id){
+  if(!confirm('Delete this cash entry?')) return;
+  db.__cashLedger=getCashLedger().filter(e=>String(e.id)!==String(id));
+  save();renderCashLedger();
+}
+function renderCashLedger(){
+  const el=$('cashList'); if(!el)return;
+  const entries=getCashLedger().slice().sort((a,b)=>String(b.date).localeCompare(String(a.date)) || Number(b.id)-Number(a.id));
+  let cashReceived=0;
+  Object.entries(db).filter(([k,v])=>k!=='__cashLedger' && v && v.booking).forEach(([k])=>{const d=reportData(k); cashReceived+=d.cashReceived; });
+  cashReceived+=entries.filter(e=>e.type==='received').reduce((s,e)=>s+n(e.amount),0);
+  const outflow=entries.filter(e=>e.type!=='received').reduce((s,e)=>s+n(e.amount),0);
+  $('cashReceived').textContent=money(cashReceived); $('cashCashReceived').textContent=money(cashReceived); $('cashOutflow').textContent=money(outflow); $('cashAvailable').textContent=money(cashReceived-outflow);
+  const labels={received:'Amount Received',expense:'Expense',rent:'Rent Paid',bank:'Bank Deposit',other:'Other Payment'};
+  el.innerHTML=entries.length?entries.map(e=>{const incoming=e.type==='received';const d=e.date?new Date(e.date+'T00:00:00').toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):'-';return `<div class="cashRow"><div class="cashRowTop"><div><b>${esc(labels[e.type]||e.type)}</b><div class="cashMeta">${esc(d)}${e.desc?' • '+esc(e.desc):''}</div></div><div class="${incoming?'cashIn':'cashOut'}">${incoming?'+':'−'} ${money(e.amount)}</div></div><button type="button" class="cashDelete" onclick="deleteCashEntry('${String(e.id).replace(/'/g,'')}')">Delete</button></div>`}).join(''):'<div class="cashEmpty">No cash entries yet.</div>';
+}
+function renderReport(){
+  const bs=$('backupStatus'); if(bs) bs.textContent=autoBackupNotice();let keys=Object.keys(db).filter(k=>k!=='__cashLedger');if(!keys.length){$('report').innerHTML='<span class="muted">No bookings yet.</span>';return;}let totalIncome=keys.reduce((s,k)=>s+n(reportData(k).total),0),totalExpenses=keys.reduce((s,k)=>s+n(reportData(k).ex),0),finalIncome=totalIncome-totalExpenses;$('report').innerHTML=`<div class="card reportSummary"><h2>REPORT SUMMARY</h2><div class="summaryRow"><span>Total Income</span><b>${money(totalIncome)}</b></div><div class="summaryRow expenseRow"><span>Total Expenses</span><b>− ${money(totalExpenses).replace('₹','₹')}</b></div><div class="summaryFinal"><span>Total Final Income</span><b>${money(finalIncome)}</b></div></div>`+keys.map(k=>{let d=reportData(k),b=d.b;return `<div class="card reportCard"><div class="reportTop"><div><b>${esc(k)}</b> — ${esc(b.event||'')}</div><span class="muted">${b.date?esc(new Date(b.date+'T00:00:00').toLocaleDateString('en-IN')):''}</span></div><div><b>${esc(b.name||'')}</b>${b.phone?' • '+esc(b.phone):''}</div><div class="remarks"><b>Remarks:</b> ${esc(b.notes||'-')}</div><div class="line"><span>1st Advance Received</span><b>${money(d.adv)} <small>(${esc(modeLabel(d.a.advanceMode??d.b.advanceMode??'cash'))})</small></b></div><div class="line"><span>2nd Advance Received</span><b>${money(d.adv2)} <small>(${esc(modeLabel(d.a.advance2Mode??'cash'))})</small></b></div><div class="line"><span>Decoration @30%</span><b>${money(d.decoCommission)}</b></div><div class="line"><span>Lighting @30%</span><b>${money(d.lightCommission)}</b></div><div class="line"><span>Financial Total</span><b>${money(d.total)}</b></div><div class="line"><span>Total Expenses</span><b>− ${money(d.ex)}</b></div><div class="line total"><span>Financial Balance</span><b>${money(d.final)}</b></div><div class="grid2"><button onclick="shareBookingReport('${esc(k)}')">📤 Share</button><button onclick="pdfBookingReport('${esc(k)}')">📄 PDF</button></div><button onclick="whatsappBookingConfirmation('${esc(k)}')">💬 Send Booking Confirmation on WhatsApp</button></div>`}).join('');}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',function(){setupMenu();renderBookings();renderCustomers();renderHome();});}else{setupMenu();renderBookings();renderCustomers();}
+</script>
+<div id="termsModal" class="termsModal" aria-hidden="true">
+  <div class="termsModalCard">
+    <div class="termsModalHead">
+      <h3>Terms &amp; Conditions</h3>
+      <button type="button" class="termsClose" onclick="closeTermsModal()">×</button>
+    </div>
+    <div class="termsText">
+    <p>An advance amount of 50% is required to block the date.</p>
+    <p>The booking amount is non-refundable. Date change is allowed only subject to availability.</p>
+    <p>The final bill is based on actual usage (electricity, diesel, personnel and other applicable charges).</p>
+    <p>Balance must be paid before the event.</p>
+    <p>Damages, if any, will be chargeable at actual cost.</p>
+    <p>Hall usage timings must be strictly followed. Extra hours beyond 12 hours will be charged at ₹_____ per hour, subject to availability.</p>
+    <p>Client is responsible for proper waste handling. Excess cleaning charges will be billed additionally.</p>
+    <p>Any damage to property, furniture, electrical fittings, washrooms, dining tables &amp; chairs will be charged at actual cost.</p>
+    <p>Use of firecrackers, open flames, or gas cylinders inside the hall without management approval is strictly prohibited.</p>
+    <p>Management is not responsible for vehicle damage or theft in the parking area.</p>
+    <p>Payments are accepted via Cash / UPI / Bank Transfer.</p>
+    <p>GST will be charged extra as per government norms (if applicable).</p>
+    <p>Management reserves the right to modify these terms and conditions without prior notice.</p>
+  </div>
+  </div>
+</div>
+
+</body></html>
+<script>try{ if(Object.keys(db).length && !localStorage.getItem('ssdb_backup')) save(); }catch(e){}
+function openTermsModal(){
+  var m=document.getElementById('termsModal');
+  if(m){m.classList.add('open');m.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';}
+}
+function closeTermsModal(){
+  var m=document.getElementById('termsModal');
+  if(m){m.classList.remove('open');m.setAttribute('aria-hidden','true');document.body.style.overflow='';}
+}
+document.addEventListener('click',function(e){
+  var m=document.getElementById('termsModal');
+  if(m && e.target===m) closeTermsModal();
+});
+</script>
